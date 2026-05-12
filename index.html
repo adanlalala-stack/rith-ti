@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rich-TI · 发财体质测试</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0c15;
+    --card: #161625;
+    --text: #e8e3d9;
+    --text-secondary: #9995a0;
+    --text-tertiary: #6b6778;
+    --accent: #e2b04a;
+    --accent-light: rgba(226,176,74,0.2);
+    --accent-dim: rgba(226,176,74,0.08);
+    --border: rgba(255,255,255,0.08);
+    --border-light: rgba(255,255,255,0.05);
+    --shadow-sm: none;
+    --shadow-md: none;
+    --radius: 12px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-family: -apple-system, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(ellipse at 30% 10%, rgba(155,124,252,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 90%, rgba(226,176,74,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 50%, rgba(94,234,212,0.03) 0%, transparent 70%);
+  }
+
+  .app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* ===== LANDING ===== */
+  #landing {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    animation: fadeIn .5s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .logo-mark {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent), #d4952a);
+    color: var(--bg);
+    font-size: 1.5rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 24px rgba(226,176,74,0.2);
+  }
+
+  #landing h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    background: linear-gradient(135deg, var(--accent) 0%, #f5d78c 30%, #9b7cfc 70%, #b49cff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  #landing h1 span { -webkit-text-fill-color: var(--accent); }
+
+  #landing .subtitle {
+    font-size: .95rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 300px;
+  }
+
+  .landing-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .landing-tags span {
+    font-size: .75rem;
+    color: var(--text-secondary);
+    background: var(--card);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .btn-start {
+    margin-top: 16px;
+    padding: 14px 64px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--bg);
+    background: linear-gradient(135deg, var(--accent), #d4952a);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 4px 24px rgba(226,176,74,0.25);
+  }
+
+  .btn-start:hover { transform: scale(1.03); box-shadow: 0 6px 32px rgba(226,176,74,0.4); }
+  .btn-start:active { transform: scale(0.98); }
+
+  .disclaimer-inline {
+    font-size: .68rem;
+    color: var(--text-tertiary);
+    margin-top: 16px;
+  }
+
+  /* ===== QUIZ ===== */
+  #quiz { display: none; flex: 1; flex-direction: column; animation: fadeIn .3s ease; }
+
+  .progress-wrap { margin-bottom: 28px; }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: .75rem;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--border-light);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width .35s ease;
+  }
+
+  .dimension-label {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #9b7cfc;
+    background: rgba(155,124,252,0.12);
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .question-text {
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.75;
+    margin-bottom: 32px;
+    color: var(--text);
+  }
+
+  .options { display: flex; flex-direction: column; gap: 8px; }
+
+  .option-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 15px 20px;
+    font-size: .9rem;
+    color: var(--text);
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all .15s;
+    text-align: left;
+    font-family: inherit;
+  }
+
+  .option-btn:hover {
+    border-color: rgba(226,176,74,0.35);
+    background: rgba(226,176,74,0.06);
+  }
+
+  .option-btn:active { transform: scale(0.985); }
+
+  .option-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    margin-right: 12px;
+    flex-shrink: 0;
+    transition: background .15s;
+  }
+
+  .option-btn:hover .option-dot { background: var(--accent); }
+
+  /* ===== RESULT ===== */
+  #result { display: none; flex-direction: column; animation: fadeIn .45s ease; padding-bottom: 40px; }
+
+  .result-header {
+    text-align: center;
+    padding: 28px 0 20px;
+  }
+
+  .result-badge {
+    display: inline-block;
+    font-size: .7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: rgba(226,176,74,0.1);
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+
+  .result-type-code {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .result-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), #f5d78c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+  }
+
+  .result-desc {
+    font-size: .88rem;
+    color: var(--text-secondary);
+    line-height: 1.75;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* Dimension gauges */
+  .gauges { display: flex; flex-direction: column; gap: 14px; margin: 28px 0; }
+
+  .gauge-card {
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .gauge-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .gauge-dim-name {
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .gauge-result {
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  .gauge-bar-wrap {
+    position: relative;
+    height: 24px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .gauge-segment {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .65rem;
+    font-weight: 600;
+    transition: all .4s ease;
+    color: transparent;
+  }
+
+  .gauge-seg-left { background: rgba(155,124,252,0.25); border-radius: 6px 0 0 6px; }
+  .gauge-seg-mid { background: rgba(255,255,255,0.04); }
+  .gauge-seg-right { background: rgba(226,176,74,0.2); border-radius: 0 6px 6px 0; }
+
+  .gauge-indicator {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 2px;
+    background: #fff;
+    border-radius: 2px;
+    z-index: 2;
+    transition: left .5s ease;
+    box-shadow: 0 0 8px rgba(255,255,255,0.3);
+  }
+
+  .gauge-desc {
+    font-size: .76rem;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    line-height: 1.65;
+  }
+
+  /* Fun extras */
+  .fun-extras {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 6px 0 18px;
+  }
+
+  .fun-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px 14px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .fun-card .label { font-size: .7rem; color: var(--text-tertiary); margin-bottom: 6px; letter-spacing: 0.02em; }
+  .fun-card .value { font-size: .95rem; font-weight: 700; color: var(--text); }
+
+  .fortune-dots { color: var(--accent); font-size: 1.1rem; letter-spacing: 3px; }
+
+  .btn-retake {
+    width: 100%;
+    padding: 14px;
+    font-size: .9rem;
+    font-weight: 600;
+    color: var(--text);
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+  }
+
+  .btn-retake:hover {
+    border-color: rgba(155,124,252,0.5);
+    background: rgba(155,124,252,0.08);
+  }
+
+  .result-footer-disclaimer {
+    text-align: center;
+    font-size: .66rem;
+    color: var(--text-tertiary);
+    margin-top: 24px;
+    line-height: 1.6;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 400px) {
+    #landing h1 { font-size: 1.9rem; }
+    .question-text { font-size: 1.05rem; }
+    .fun-extras { grid-template-columns: 1fr; }
+    .option-btn { padding: 13px 16px; font-size: .87rem; }
+    body { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ========== LANDING ========== -->
+  <section id="landing">
+    <div class="logo-mark">R</div>
+    <h1>Rich-<span>TI</span></h1>
+    <p class="subtitle">
+      测测你的发财体质<br>
+      30 道题 · 5 个维度 · 243 种可能
+    </p>
+    <div class="landing-tags">
+      <span>锦鲤还是猎手</span>
+      <span>梭哈还是稳如老狗</span>
+      <span>靠人脉还是靠手艺</span>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">开始测试</button>
+    <p class="disclaimer-inline">仅供娱乐，请勿作为投资建议。你的发财你做主。</p>
+  </section>
+
+  <!-- ========== QUIZ ========== -->
+  <section id="quiz">
+    <div class="progress-wrap">
+      <div class="progress-info"><span id="q-counter">1/30</span><span id="dim-tag"></span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <span class="dimension-label" id="dim-label"></span>
+    <p class="question-text" id="q-text"></p>
+    <div class="options" id="options"></div>
+  </section>
+
+  <!-- ========== RESULT ========== -->
+  <section id="result"></section>
+
+</div>
+
+<script>
+const DIMENSIONS = [
+  {
+    id: 'D1', name: '财源雷达',
+    types: [
+      { id: 'jinli',   name: '锦鲤型', label: '财运自来',
+        desc: '你相信财运这回事，而且事实证明你确实常常莫名其妙撞上好机会。朋友愿意帮你、陌生人愿意信你——好像自带财运磁场。你的策略不是疯狂寻找，而是保持开放，让机会找到你。' },
+      { id: 'lieshou', name: '猎手型', label: '主动出击',
+        desc: '你不信运气，你信信息量。你会大量阅读、研究、拆解别人的搞钱案例，在别人还在刷短视频的时候，你已经在分析下一个风口。机会不是等来的，是你一枪一枪打下来的。' },
+      { id: 'yuzhou',  name: '宇宙型', label: '能量感知',
+        desc: '你相信万事万物都有能量，财富也不例外。与其说你在找机会，不如说你在感应机会——直觉告诉你什么方向对了，什么时机到了。你信任宇宙的安排，也信任自己的第六感。' }
+    ]
+  },
+  {
+    id: 'D2', name: '风险偏好',
+    types: [
+      { id: 'suoha',   name: '梭哈型', label: '敢赌敢搏',
+        desc: '你骨子里相信"富贵险中求"。看准了，就敢下重注。你不怕波动、不怕短期亏损，因为你知道——大成需要大赌。保守让你不舒服，平庸让你窒息。' },
+      { id: 'suanpan', name: '算盘型', label: '精算稳健',
+        desc: '你的人生字典里没有"梭哈"两个字。你会算好每一笔账，确认最坏结果你能承受，才会出手。别人看来你太谨慎，但你知道——活得久比跑得快重要一百倍。' },
+      { id: 'juji',    name: '狙击型', label: '精准一击',
+        desc: '你平时看起来和算盘型一样保守——但那是表象。你只是在等。等那个"就是它了"的信号出现时，你会毫不犹豫扣动扳机。你不是不敢赌，你是不值得的绝不赌。' }
+    ]
+  },
+  {
+    id: 'D3', name: '变现密码',
+    types: [
+      { id: 'shejiao', name: '社交型', label: '人脉变现',
+        desc: '你的超能力是让人喜欢你、信任你。你擅长连接人、整合资源、让信息在人脉网络中流动——然后从中找到变现的节点。个人品牌、圈层影响力是你最重要的资产。' },
+      { id: 'shouyi',  name: '手艺型', label: '技能变现',
+        desc: '你相信硬核实力。比起社交局上的觥筹交错，你更愿意花时间打磨一门不可替代的手艺。你的底气来自——不管大环境怎么变，你的技能永远有市场。闷声发大财是你的风格。' },
+      { id: 'renzhi',  name: '认知型', label: '眼光变现',
+        desc: '你赚的是信息差和认知差的钱。别人看到的是一个东西的现在，你看到的是它的未来。你能在大多数人还没反应过来的时候，就已经下了判断、布好了局。' }
+    ]
+  },
+  {
+    id: 'D4', name: '金钱观念',
+    types: [
+      { id: 'xiangle', name: '享乐型', label: '及时行乐',
+        desc: '钱赚来是干嘛的？当然是花的！你对自己不吝啬，对朋友也大方。你觉得钱是工具，不是目的——让生活精彩、让爱的人开心，这才是财富的意义。而且你相信：敢花的人，财运不会差。' },
+      { id: 'jilei',   name: '积累型', label: '财富堡垒',
+        desc: '银行卡余额是你最大的安全感来源。你不一定抠门，但每一笔钱花出去之前都会想一想。你相信复利的力量——不只是钱生钱，更是习惯生钱。不声不响的，你可能比所有人都富得久。' },
+      { id: 'xunhuan', name: '循环型', label: '金钱炼金',
+        desc: '你对钱的理解是动态的——钱不是用来存的，也不是用来花的，是用来"转"的。赚了投，投了赚，让每一分钱都在流动中增值。你喜欢研究各种投资工具，把理财当成一种游戏。' }
+    ]
+  },
+  {
+    id: 'D5', name: '致富路径',
+    types: [
+      { id: 'yexing',  name: '野性型', label: '野蛮生长',
+        desc: '你讨厌被框住。五年计划？不存在的。你相信随机应变、多点开花——东边不亮西边亮。可能看起来有点乱，但你总能从混乱中找到自己的节奏，而且经常出其不意地成功。' },
+      { id: 'guihua',  name: '规划型', label: '步步为营',
+        desc: '你有清晰的目标，而且你知道怎么拆解目标、制定计划、一步步执行。别人觉得你太稳，但你知道——所有看起来的"一夜暴富"，背后都是长期规划和持续执行。' },
+      { id: 'jieshi',  name: '借势型', label: '顺势而为',
+        desc: '你相信选择比努力重要。找到一个好的平台、一个上升的行业、一个对的合伙人——比你一个人埋头苦干重要一百倍。你不是不努力，你是把努力投在最有杠杆的地方。' }
+    ]
+  }
+];
+
+const QUESTIONS = [
+  { id:1,  dim:'D1', type:'jinli',   text:'我经常莫名其妙就撞上赚钱的机会，好像财运追着我跑。' },
+  { id:2,  dim:'D1', type:'lieshou', text:'我会花大量时间研究各种搞钱案例和商业模式，这是我的日常。' },
+  { id:3,  dim:'D1', type:'yuzhou',  text:'我相信保持好的能量状态，财富自然会流向我，不需要刻意追逐。' },
+  { id:4,  dim:'D1', type:'jinli',   text:'身边的人经常主动给我介绍搞钱的路子，好像我是"锦鲤"。' },
+  { id:5,  dim:'D1', type:'lieshou', text:'看到一个行业火了，我第一反应是深入研究能不能入局。' },
+  { id:6,  dim:'D1', type:'yuzhou',  text:'做重要决定时，直觉比数据和理性分析更让我信服。' },
+
+  { id:7,  dim:'D2', type:'suoha',   text:'如果看准了一个机会，我愿意押上大部分身家去博一把大的。' },
+  { id:8,  dim:'D2', type:'suanpan', text:'任何投资或搞钱项目，我都会先算好最坏情况能不能承受。' },
+  { id:9,  dim:'D2', type:'juji',    text:'平时我很保守，但一旦遇到真正心动的机会，我会果断出手。' },
+  { id:10, dim:'D2', type:'suoha',   text:'我认同"富贵险中求"——不冒险就不可能实现财富跃迁。' },
+  { id:11, dim:'D2', type:'suanpan', text:'我更倾向于低风险稳收益，慢慢变富比一夜暴富靠谱多了。' },
+  { id:12, dim:'D2', type:'juji',    text:'我可以等很久不出手，但出手的时候就一定要打中靶心。' },
+
+  { id:13, dim:'D3', type:'shejiao', text:'我擅长让陌生人在短时间内对我产生好感和信任。' },
+  { id:14, dim:'D3', type:'shouyi',  text:'我认为有一门独当一面的硬核技能，比什么人脉都重要。' },
+  { id:15, dim:'D3', type:'renzhi',  text:'我赚的钱，大多来自我知道但大多数人还不知道的信息。' },
+  { id:16, dim:'D3', type:'shejiao', text:'经营人脉和打造个人品牌，是我最重要的搞钱策略。' },
+  { id:17, dim:'D3', type:'shouyi',  text:'比起参加社交活动，我更享受独自钻研技术或手艺。' },
+  { id:18, dim:'D3', type:'renzhi',  text:'我常常能看到一个东西还没火起来之前就判断出它的潜力。' },
+
+  { id:19, dim:'D4', type:'xiangle', text:'赚了钱就应该拿来提升生活品质，对自己好一点天经地义。' },
+  { id:20, dim:'D4', type:'jilei',   text:'银行卡余额增长带给我的安全感，超过大多数事情。' },
+  { id:21, dim:'D4', type:'xunhuan', text:'我赚到钱之后，第一反应是想办法让它变成更多的钱。' },
+  { id:22, dim:'D4', type:'xiangle', text:'钱不是攒出来的，钱是花出来的——敢花才会赚。' },
+  { id:23, dim:'D4', type:'jilei',   text:'我平时的消费习惯比较克制，花钱之前会思考是不是真的需要。' },
+  { id:24, dim:'D4', type:'xunhuan', text:'我喜欢研究各种投资和理财工具，让钱不停地在流动增值。' },
+
+  { id:25, dim:'D5', type:'yexing',  text:'我不喜欢给自己设太具体的搞钱目标和计划，随性而为更适合我。' },
+  { id:26, dim:'D5', type:'guihua',  text:'我每年都会设定清晰的财务目标，并且有详细的执行计划。' },
+  { id:27, dim:'D5', type:'jieshi',  text:'选对行业、跟对平台、找对合伙人，比个人努力重要得多。' },
+  { id:28, dim:'D5', type:'yexing',  text:'我经常同时尝试好几个搞钱方向，多点开花让我更有安全感。' },
+  { id:29, dim:'D5', type:'guihua',  text:'我相信"凡事预则立，不预则废"——搞钱尤其需要规划。' },
+  { id:30, dim:'D5', type:'jieshi',  text:'我善于借助外部力量——平台、风口、贵人——来放大自己的收益。' }
+];
+
+const ANSWER_LABELS = [
+  '完全不符合', '不太符合', '不确定', '比较符合', '完全符合'
+];
+
+const ARCHETYPES = [
+  {
+    pattern: { D1:'jinli',   D2:'suoha',   D3:'shejiao', D4:'xiangle', D5:'yexing' },
+    title: '野性锦鲤 · 流量冒险家',
+    desc: '你是朋友圈里那个什么都敢试的人。自带锦鲤体质，社交场上如鱼得水，而且胆子大——愿意为机会押注。你的财富密码藏在人脉和胆量的交汇处，记得关键时刻收一收，别太浪。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'suanpan', D3:'shouyi',  D4:'jilei',   D5:'guihua' },
+    title: '精密猎手 · 财富建筑师',
+    desc: '你是搞钱界的"扫地僧"。不声张、不冒进，但每一步都踩得很稳。你主动研究、精打细算、靠硬实力吃饭，长期来看你的复利曲线会让所有人后悔没早点认识你。'
+  },
+  {
+    pattern: { D1:'yuzhou',  D2:'suanpan', D3:'renzhi',  D4:'xunhuan', D5:'jieshi' },
+    title: '宇宙淘金者 · 趋势感知者',
+    desc: '你相信直觉、相信能量、相信周期。你不急着动，但你在感知。当别人还在用眼睛看的时候，你已经用"天线"接收到了信号。找到对的势，顺势而为，是你最舒服的搞钱姿势。'
+  },
+  {
+    pattern: { D1:'jinli',   D2:'juji',    D3:'shejiao', D4:'xunhuan', D5:'jieshi' },
+    title: '社交锦鲤 · 圈层架构师',
+    desc: '你好运、好人缘、好眼光——三好学生型搞钱选手。社交让你获得信息，眼光让你判断时机，锦鲤体质让你总在关键时刻遇上对的人。你在圈层之间游走，像一只优雅的信息路由器。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'suoha',   D3:'renzhi',  D4:'xunhuan', D5:'yexing' },
+    title: '野性猎手 · 认知赌徒',
+    desc: '你有一双发现机会的鹰眼，而且你敢下注——大注。你不走寻常路，不按常理出牌，但你的认知深度是你最大的护城河。别人觉得你在赌，其实你知道自己在做什么。'
+  },
+  {
+    pattern: { D1:'jinli',   D2:'suanpan', D3:'shouyi',  D4:'jilei',   D5:'guihua' },
+    title: '稳健锦鲤 · 长期主义匠人',
+    desc: '你可以说是"反直觉"的存在——有锦鲤的运气，却选择最稳的打法。靠手艺吃饭、靠规划前进、靠积累变富。你不追求爆发，但你的每一步都不可逆地在变富。'
+  },
+  {
+    pattern: { D1:'yuzhou',  D2:'suoha',   D3:'shejiao', D4:'xiangle', D5:'yexing' },
+    title: '宇宙浪子 · 灵感冒险王',
+    desc: '你大概是最"随缘"的搞钱人了。相信宇宙的指引，想到什么就做什么，敢冲敢花，不在乎输赢。你不一定是最富的，但你一定是活得最痛快的。而且——宇宙往往眷顾你这种人。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'juji',    D3:'renzhi',  D4:'jilei',   D5:'guihua' },
+    title: '精准猎手 · 认知军火商',
+    desc: '你的武器库是认知。你花大量时间研究、分析、等待——然后在完美时机精确打击。不浪费子弹，不打没把握的仗。你是那种"三年不开张，开张吃三年"的狠人。'
+  },
+  {
+    pattern: { D1:'jinli',   D2:'suanpan', D3:'shejiao', D4:'xunhuan', D5:'jieshi' },
+    title: '社交锦鲤 · 人脉炼金师',
+    desc: '你的人脉不是"认识很多人"，而是"很多资源在你这里交汇"。锦鲤体质让你轻松获得信任，社交天赋让你把关系变成资产，循环思维让你把每一份信任都变成可持续的财富。'
+  },
+  {
+    pattern: { D1:'yuzhou',  D2:'juji',    D3:'shouyi',  D4:'jilei',   D5:'jieshi' },
+    title: '宇宙匠人 · 隐秘狙击手',
+    desc: '你看起来不显山不露水，但内心有自己的节奏。相信直觉、打磨手艺、耐心等待——然后在关键时刻借势而起。你的财富之路不急，但一旦启动就很难停下来。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'suanpan', D3:'renzhi',  D4:'xunhuan', D5:'jieshi' },
+    title: '信息猎手 · 趋势套利者',
+    desc: '你是信息不对称的受益者——不是靠关系，而是靠研究。你比别人早一步知道、早一步理解、早一步布局。在信息就是金钱的时代，你是那个拿着地图的人。'
+  },
+  {
+    pattern: { D1:'jinli',   D2:'juji',    D3:'shouyi',  D4:'jilei',   D5:'yexing' },
+    title: '野性锦鲤 · 斜杠六边形',
+    desc: '你运气好、技能点多、敢尝试——而且你还不喜欢被一种身份定义。你的搞钱方式是"多点散打"，东边不亮西边亮。你可能是朋友眼里那个什么都搞得定的人。'
+  }
+];
+
+// State
+let answers = {};
+let currentQ = 0;
+let typeResult = {};
+
+function startQuiz() {
+  answers = {};
+  currentQ = 0;
+  typeResult = {};
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('quiz').style.display = 'flex';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  if (currentQ >= QUESTIONS.length) {
+    calculateResult();
+    renderResult();
+    return;
+  }
+
+  const q = QUESTIONS[currentQ];
+  const dim = DIMENSIONS.find(d => d.id === q.dim);
+
+  document.getElementById('q-counter').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
+  document.getElementById('dim-tag').textContent = dim.name;
+  document.getElementById('dim-label').textContent = dim.name;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('progress-fill').style.width = `${(currentQ / QUESTIONS.length) * 100}%`;
+
+  const optsEl = document.getElementById('options');
+  optsEl.innerHTML = '';
+
+  ANSWER_LABELS.forEach((label, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="option-dot"></span>${label}`;
+    btn.addEventListener('click', () => {
+      answers[q.id] = i + 1;
+      currentQ++;
+      renderQuestion();
+    });
+    optsEl.appendChild(btn);
+  });
+
+  document.getElementById('quiz').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function calculateResult() {
+  DIMENSIONS.forEach(dim => {
+    const scores = {};
+    dim.types.forEach(t => { scores[t.id] = 0; });
+
+    QUESTIONS.forEach(q => {
+      if (q.dim === dim.id && answers[q.id]) {
+        scores[q.type] += answers[q.id];
+      }
+    });
+
+    let bestType = dim.types[0].id;
+    let bestScore = 0;
+    dim.types.forEach(t => {
+      if (scores[t.id] > bestScore) {
+        bestScore = scores[t.id];
+        bestType = t.id;
+      }
+    });
+
+    typeResult[dim.id] = { typeId: bestType, scores };
+  });
+}
+
+function findClosestArchetype() {
+  let bestMatch = null;
+  let bestCount = -1;
+
+  ARCHETYPES.forEach(arch => {
+    let matchCount = 0;
+    for (const [dim, type] of Object.entries(arch.pattern)) {
+      if (typeResult[dim] && typeResult[dim].typeId === type) matchCount++;
+    }
+    if (matchCount > bestCount) { bestCount = matchCount; bestMatch = arch; }
+  });
+
+  return bestMatch;
+}
+
+function renderResult() {
+  const archetype = findClosestArchetype();
+  const resultEl = document.getElementById('result');
+
+  const typeCode = DIMENSIONS.map(dim => {
+    const t = dim.types.find(t => t.id === typeResult[dim.id].typeId);
+    return t.name;
+  }).join('  ·  ');
+
+  const fortuneDots = Math.floor(Math.random() * 3) + 2;
+  const dotsStr = '●'.repeat(fortuneDots) + '○'.repeat(5 - fortuneDots);
+
+  const luckyColors = ['琥珀', '墨绿', '靛蓝', '朱红', '月白', '赤金', '青灰', '藕粉', '玄黑', '黛紫'];
+  const luckyNums = ['8', '6', '3', '9', '2', '7', '13', '24', '42', '88'];
+  const luckyDirs = ['东南', '正北', '西南', '正东', '西北', '东北', '正南', '正西'];
+
+  const luckyColor = luckyColors[Math.floor(Math.random() * luckyColors.length)];
+  const luckyNum = luckyNums[Math.floor(Math.random() * luckyNums.length)];
+  const luckyDir = luckyDirs[Math.floor(Math.random() * luckyDirs.length)];
+  const compatible = ARCHETYPES[Math.floor(Math.random() * ARCHETYPES.length)];
+
+  let html = '';
+
+  html += `
+    <div class="result-header">
+      <span class="result-badge">你的发财体质</span>
+      <div class="result-type-code">${typeCode}</div>
+      <div class="result-title">${archetype.title}</div>
+      <p class="result-desc">${archetype.desc}</p>
+    </div>
+  `;
+
+  html += '<div class="gauges">';
+  DIMENSIONS.forEach(dim => {
+    const result = typeResult[dim.id];
+    const myType = dim.types.find(t => t.id === result.typeId);
+    const scores = result.scores;
+    const total = Object.values(scores).reduce((a, b) => a + b, 0) || 1;
+    const types = dim.types;
+    const pcts = types.map(t => scores[t.id] / total);
+
+    let indicatorPct = 0;
+    for (let i = 0; i < types.length; i++) {
+      if (types[i].id === result.typeId) {
+        indicatorPct = (pcts.slice(0, i).reduce((a,b)=>a+b, 0) + pcts[i] / 2) * 100;
+      }
+    }
+
+    html += `
+      <div class="gauge-card">
+        <div class="gauge-header">
+          <span class="gauge-dim-name">${dim.name}</span>
+          <span class="gauge-result">${myType.name}  ·  ${myType.label}</span>
+        </div>
+        <div class="gauge-bar-wrap">
+          <div class="gauge-segment gauge-seg-left" style="width:${pcts[0]*100}%"></div>
+          <div class="gauge-segment gauge-seg-mid" style="width:${pcts[1]*100}%"></div>
+          <div class="gauge-segment gauge-seg-right" style="width:${pcts[2]*100}%"></div>
+          <div class="gauge-indicator" style="left:${indicatorPct}%"></div>
+        </div>
+        <p class="gauge-desc">${myType.desc}</p>
+      </div>
+    `;
+  });
+  html += '</div>';
+
+  html += '<div class="fun-extras">';
+  html += `<div class="fun-card"><div class="label">幸运色</div><div class="value">${luckyColor}</div></div>`;
+  html += `<div class="fun-card"><div class="label">幸运数字</div><div class="value">${luckyNum}</div></div>`;
+  html += `<div class="fun-card"><div class="label">搞钱方位</div><div class="value">${luckyDir}</div></div>`;
+  html += `<div class="fun-card"><div class="label">今日发财指数</div><div class="value fortune-dots">${dotsStr}</div></div>`;
+  html += '</div>';
+
+  html += `
+    <div class="fun-card" style="text-align:left;margin-bottom:18px">
+      <div class="label">最佳搞钱搭子</div>
+      <div class="value" style="font-size:.88rem;margin-bottom:4px">${compatible.title}</div>
+      <p style="font-size:.72rem;color:var(--text-secondary);line-height:1.55">${compatible.desc.slice(0, 55)}...</p>
+    </div>
+  `;
+
+  html += '<button class="btn-retake" onclick="retakeTest()">重新测试</button>';
+  html += '<p class="result-footer-disclaimer">仅供娱乐。每个人的发财路径都是独一无二的。<br>你不是任何测试可以定义的。</p>';
+
+  resultEl.innerHTML = html;
+  document.getElementById('quiz').style.display = 'none';
+  resultEl.style.display = 'flex';
+  resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function retakeTest() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('landing').style.display = 'flex';
+  document.getElementById('landing').scrollIntoView({ behavior: 'smooth' });
+}
+
+document.getElementById('landing').style.display = 'flex';
+</script>
+
+</body>
+</html>
