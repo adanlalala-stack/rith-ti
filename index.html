@@ -704,14 +704,14 @@ function calculateResult() {
   });
 }
 
-function findClosestArchetype() {
+function findClosestArchetype(pattern) {
   let bestMatch = null;
   let bestCount = -1;
 
   ARCHETYPES.forEach(arch => {
     let matchCount = 0;
-    for (const [dim, type] of Object.entries(arch.pattern)) {
-      if (typeResult[dim] && typeResult[dim].typeId === type) matchCount++;
+    for (const [dim, type] of Object.entries(pattern)) {
+      if (arch.pattern[dim] === type) matchCount++;
     }
     if (matchCount > bestCount) { bestCount = matchCount; bestMatch = arch; }
   });
@@ -719,11 +719,30 @@ function findClosestArchetype() {
   return bestMatch;
 }
 
+const COMPLEMENTS = {
+  D1: { jinli: 'lieshou', lieshou: 'jinli', yuzhou: 'lieshou' },
+  D2: { suoha: 'suanpan', suanpan: 'suoha', juji: 'suanpan' },
+  D3: { shejiao: 'shouyi', shouyi: 'shejiao', renzhi: 'shejiao' },
+  D4: { xiangle: 'jilei', jilei: 'xiangle', xunhuan: 'jilei' },
+  D5: { yexing: 'guihua', guihua: 'yexing', jieshi: 'guihua' }
+};
+
+function findComplementPartner() {
+  const idealPattern = {};
+  for (const dim of DIMENSIONS) {
+    const myType = typeResult[dim.id].typeId;
+    idealPattern[dim.id] = COMPLEMENTS[dim.id][myType];
+  }
+  return findClosestArchetype(idealPattern);
+}
+
 function renderResult() {
-  const archetype = findClosestArchetype();
+  const archetype = findClosestArchetype(
+    Object.fromEntries(Object.entries(typeResult).map(([k, v]) => [k, v.typeId]))
+  );
   const resultEl = document.getElementById('result');
 
-  const compatible = ARCHETYPES[Math.floor(Math.random() * ARCHETYPES.length)];
+  const compatible = findComplementPartner();
 
   let html = '';
 
@@ -771,9 +790,9 @@ function renderResult() {
 
   html += `
     <div class="fun-card" style="text-align:left;margin-bottom:18px">
-      <div class="label">最佳搞钱搭子</div>
+      <div class="label">最佳搞钱搭子 · 互补匹配</div>
       <div class="value" style="font-size:.88rem;margin-bottom:4px">${compatible.title}</div>
-      <p style="font-size:.72rem;color:var(--text-secondary);line-height:1.55">${compatible.desc.slice(0, 55)}...</p>
+      <p style="font-size:.72rem;color:var(--text-secondary);line-height:1.55">${compatible.desc}</p>
     </div>
   `;
 
