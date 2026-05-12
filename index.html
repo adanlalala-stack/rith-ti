@@ -407,10 +407,7 @@
   <section id="landing">
     <div class="logo-mark">R</div>
     <h1>Rich-<span>TI</span></h1>
-    <p class="subtitle">
-      测测你的发财体质<br>
-      30 道题 · 5 个维度 · 243 种可能
-    </p>
+    <p class="subtitle">测测你的发财体质</p>
     <div class="landing-tags">
       <span>锦鲤还是猎手</span>
       <span>梭哈还是稳如老狗</span>
@@ -423,10 +420,9 @@
   <!-- ========== QUIZ ========== -->
   <section id="quiz">
     <div class="progress-wrap">
-      <div class="progress-info"><span id="q-counter">1/30</span><span id="dim-tag"></span></div>
+      <div class="progress-info"><span id="q-counter">1/30</span></div>
       <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
     </div>
-    <span class="dimension-label" id="dim-label"></span>
     <p class="question-text" id="q-text"></p>
     <div class="options" id="options"></div>
   </section>
@@ -538,64 +534,104 @@ const ANSWER_LABELS = [
 
 const ARCHETYPES = [
   {
-    pattern: { D1:'jinli',   D2:'suoha',   D3:'shejiao', D4:'xiangle', D5:'yexing' },
-    title: '野性锦鲤 · 流量冒险家',
-    desc: '你是朋友圈里那个什么都敢试的人。自带锦鲤体质，社交场上如鱼得水，而且胆子大——愿意为机会押注。你的财富密码藏在人脉和胆量的交汇处，记得关键时刻收一收，别太浪。'
+    pattern: { D1:'jinli',   D2:'suoha',   D3:'shejiao', D4:'xiangle', D5:'jieshi' },
+    title: '风口飞猪',
+    desc: '你是朋友圈里最敏锐的趋势捕手。锦鲤体质让你好运不断，梭哈的胆量让你敢在风口下重注，社交天赋让你不缺信息和资源。你的人生信条是：站在风口上，猪都能飞——何况你本来就是锦鲤。'
   },
   {
     pattern: { D1:'lieshou', D2:'suanpan', D3:'shouyi',  D4:'jilei',   D5:'guihua' },
-    title: '精密猎手 · 财富建筑师',
-    desc: '你是搞钱界的"扫地僧"。不声张、不冒进，但每一步都踩得很稳。你主动研究、精打细算、靠硬实力吃饭，长期来看你的复利曲线会让所有人后悔没早点认识你。'
+    title: '闷声扫地僧',
+    desc: '你是搞钱界最低调的实力派。不声张、不冒进、不追风口，但每一步都踩得极稳。靠硬核技能吃饭，用规划代替赌博，用积累代替暴富。五年后回头看，你可能比所有追风口的人都有钱。'
   },
   {
-    pattern: { D1:'yuzhou',  D2:'suanpan', D3:'renzhi',  D4:'xunhuan', D5:'jieshi' },
-    title: '宇宙淘金者 · 趋势感知者',
-    desc: '你相信直觉、相信能量、相信周期。你不急着动，但你在感知。当别人还在用眼睛看的时候，你已经用"天线"接收到了信号。找到对的势，顺势而为，是你最舒服的搞钱姿势。'
+    pattern: { D1:'jinli',   D2:'suoha',   D3:'shejiao', D4:'xunhuan', D5:'yexing' },
+    title: '流量炼金师',
+    desc: '你有把关注度变成钱的天赋。锦鲤体质让你轻松获得曝光，社交嗅觉让你知道什么内容会火，循环思维让你不停地把流量转化成资产。你就是行走的"流量变现公式"。'
   },
   {
-    pattern: { D1:'jinli',   D2:'juji',    D3:'shejiao', D4:'xunhuan', D5:'jieshi' },
-    title: '社交锦鲤 · 圈层架构师',
-    desc: '你好运、好人缘、好眼光——三好学生型搞钱选手。社交让你获得信息，眼光让你判断时机，锦鲤体质让你总在关键时刻遇上对的人。你在圈层之间游走，像一只优雅的信息路由器。'
+    pattern: { D1:'lieshou', D2:'juji',    D3:'renzhi',  D4:'jilei',   D5:'jieshi' },
+    title: '认知军火商',
+    desc: '你的武器是认知——通过深度研究建立信息优势，然后在完美时机精准打击。你不浪费子弹，不打没把握的仗。你是那种"三年不开张，开张吃三年"的狠人。'
   },
   {
-    pattern: { D1:'lieshou', D2:'suoha',   D3:'renzhi',  D4:'xunhuan', D5:'yexing' },
-    title: '野性猎手 · 认知赌徒',
-    desc: '你有一双发现机会的鹰眼，而且你敢下注——大注。你不走寻常路，不按常理出牌，但你的认知深度是你最大的护城河。别人觉得你在赌，其实你知道自己在做什么。'
-  },
-  {
-    pattern: { D1:'jinli',   D2:'suanpan', D3:'shouyi',  D4:'jilei',   D5:'guihua' },
-    title: '稳健锦鲤 · 长期主义匠人',
-    desc: '你可以说是"反直觉"的存在——有锦鲤的运气，却选择最稳的打法。靠手艺吃饭、靠规划前进、靠积累变富。你不追求爆发，但你的每一步都不可逆地在变富。'
-  },
-  {
-    pattern: { D1:'yuzhou',  D2:'suoha',   D3:'shejiao', D4:'xiangle', D5:'yexing' },
-    title: '宇宙浪子 · 灵感冒险王',
-    desc: '你大概是最"随缘"的搞钱人了。相信宇宙的指引，想到什么就做什么，敢冲敢花，不在乎输赢。你不一定是最富的，但你一定是活得最痛快的。而且——宇宙往往眷顾你这种人。'
-  },
-  {
-    pattern: { D1:'lieshou', D2:'juji',    D3:'renzhi',  D4:'jilei',   D5:'guihua' },
-    title: '精准猎手 · 认知军火商',
-    desc: '你的武器库是认知。你花大量时间研究、分析、等待——然后在完美时机精确打击。不浪费子弹，不打没把握的仗。你是那种"三年不开张，开张吃三年"的狠人。'
+    pattern: { D1:'yuzhou',  D2:'suanpan', D3:'shouyi',  D4:'jilei',   D5:'yexing' },
+    title: '佛系吸金石',
+    desc: '你看起来云淡风轻，好像对赚钱不太上心——但钱就是会流向你。相信能量、相信直觉、相信做好自己的事，财富自然会来。你的搞钱哲学是：不急，但不会缺。'
   },
   {
     pattern: { D1:'jinli',   D2:'suanpan', D3:'shejiao', D4:'xunhuan', D5:'jieshi' },
-    title: '社交锦鲤 · 人脉炼金师',
-    desc: '你的人脉不是"认识很多人"，而是"很多资源在你这里交汇"。锦鲤体质让你轻松获得信任，社交天赋让你把关系变成资产，循环思维让你把每一份信任都变成可持续的财富。'
+    title: '人脉路由器',
+    desc: '你是社交网络中的超级节点。锦鲤体质让人天然信任你，精算头脑让你识别关键人物，循环思维让你把每一份关系都变成可持续的财富。大家搞钱都愿意叫上你——因为有你在事情就能成。'
   },
   {
-    pattern: { D1:'yuzhou',  D2:'juji',    D3:'shouyi',  D4:'jilei',   D5:'jieshi' },
-    title: '宇宙匠人 · 隐秘狙击手',
-    desc: '你看起来不显山不露水，但内心有自己的节奏。相信直觉、打磨手艺、耐心等待——然后在关键时刻借势而起。你的财富之路不急，但一旦启动就很难停下来。'
+    pattern: { D1:'lieshou', D2:'suoha',   D3:'renzhi',  D4:'xiangle', D5:'yexing' },
+    title: '野路子之王',
+    desc: '你不走寻常路，而且你以此为荣。用非常规方法搞钱、在别人看不见的地方发现机会、敢下重注、赚了钱尽情享受。你可能不是最稳定的，但你一定是最有趣的那个。'
   },
   {
-    pattern: { D1:'lieshou', D2:'suanpan', D3:'renzhi',  D4:'xunhuan', D5:'jieshi' },
-    title: '信息猎手 · 趋势套利者',
-    desc: '你是信息不对称的受益者——不是靠关系，而是靠研究。你比别人早一步知道、早一步理解、早一步布局。在信息就是金钱的时代，你是那个拿着地图的人。'
+    pattern: { D1:'lieshou', D2:'suanpan', D3:'shouyi',  D4:'xunhuan', D5:'guihua' },
+    title: '复利建筑师',
+    desc: '你的搞钱方式是"慢慢变富"的教科书。主动研究找方向，精打细算控风险，靠手艺持续产出，让每一分钱在循环中增值，配合清晰的长期规划。你的财富曲线是一条优美的复利曲线。'
+  },
+  {
+    pattern: { D1:'yuzhou',  D2:'juji',    D3:'renzhi',  D4:'xunhuan', D5:'jieshi' },
+    title: '灵感淘金者',
+    desc: '你不常出手，但每次出手都带着某种"天启"般的笃定。直觉告诉你时机到了，认知帮你判断价值，狙击手的耐心让你等到最佳时刻。你在灵感与实践之间找到了完美的平衡点。'
+  },
+  {
+    pattern: { D1:'jinli',   D2:'juji',    D3:'shejiao', D4:'xunhuan', D5:'jieshi' },
+    title: '社交资本家',
+    desc: '你的资本是人——好运、好人缘、好眼光，三合一的搞钱体质。社交让你获得信息，狙击让你在关键时刻出手，循环思维让你把每一份信任都变成资产。你在圈层之间游走，像一位优雅的资源调配师。'
   },
   {
     pattern: { D1:'jinli',   D2:'juji',    D3:'shouyi',  D4:'jilei',   D5:'yexing' },
-    title: '野性锦鲤 · 斜杠六边形',
-    desc: '你运气好、技能点多、敢尝试——而且你还不喜欢被一种身份定义。你的搞钱方式是"多点散打"，东边不亮西边亮。你可能是朋友眼里那个什么都搞得定的人。'
+    title: '斜杠六边形',
+    desc: '你运气好、技能点多、敢尝试——而且拒绝被一种身份定义。搞钱方式是"多点散打"，每个方向都能赚一点。你是朋友眼中那个"什么都会、什么都搞得定"的人。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'juji',    D3:'renzhi',  D4:'xunhuan', D5:'jieshi' },
+    title: '赛道预言家',
+    desc: '你不追风口——你预判风口。通过大量研究找到被低估的赛道，用狙击手的耐心等待入场时机，用认知优势做出差异化判断。你不是在赌，你是在"预测"——而且经常预测对了。'
+  },
+  {
+    pattern: { D1:'jinli',   D2:'suanpan', D3:'shejiao', D4:'xiangle', D5:'yexing' },
+    title: '快乐锦鲤',
+    desc: '你是搞钱界的佛系玩家。锦鲤体质让你不缺机会，但你不会为了钱拼命——赚了就要享受，花了才会再来。你的搞钱哲学是：开心最重要，钱只是好好生活的副产品。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'suoha',   D3:'shouyi',  D4:'jilei',   D5:'yexing' },
+    title: '技术赌徒',
+    desc: '你有硬核技能，但你也有赌性——你会在自己擅长的领域下重注。你不是盲目的赌徒，而是"懂行的赌徒"。技术是你的护城河，胆量是你的加速器。'
+  },
+  {
+    pattern: { D1:'yuzhou',  D2:'suanpan', D3:'shejiao', D4:'jilei',   D5:'guihua' },
+    title: '圈层渗透者',
+    desc: '你深谙圈层的力量。相信能量和缘分让你进入对的圈子，精算和规划让你在每个圈层里稳扎稳打。你像一个搞钱界的特工——在正确的时间出现在正确的人群中。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'suanpan', D3:'renzhi',  D4:'jilei',   D5:'guihua' },
+    title: '长期主义卷王',
+    desc: '你是搞钱界最可怕的物种——看起来不起眼，但每天都在精进认知、积累资产、按计划推进。你不追求暴富，但你的复利曲线会在第十年让所有质疑你的人闭嘴。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'suanpan', D3:'renzhi',  D4:'xunhuan', D5:'yexing' },
+    title: '信息二道贩子',
+    desc: '你的生意是信息。大量研究获取信息，精算头脑判断信息价值，认知优势加工信息，让信息在流动中变成钱。你可能是微信群里的那个"知道一些事的人"——而这些信息差就是你最好的资产。'
+  },
+  {
+    pattern: { D1:'yuzhou',  D2:'suoha',   D3:'shejiao', D4:'xiangle', D5:'yexing' },
+    title: '宇宙冒险家',
+    desc: '你大概是最"随缘"也最"敢冲"的搞钱人。相信宇宙的指引，想到了就去做，敢下重注，赚了就花，不在乎一时输赢。你不一定是最富的，但你一定是活得最痛快的——而宇宙往往眷顾你这种人。'
+  },
+  {
+    pattern: { D1:'yuzhou',  D2:'juji',    D3:'shouyi',  D4:'jilei',   D5:'jieshi' },
+    title: '隐秘操盘手',
+    desc: '你看起来不显山不露水，但内心有完整的搞钱系统。直觉感知方向，手艺提供底气，狙击性格让你耐心潜伏，借势让你在关键时刻放大收益。你是幕后的那个人——一切尽在掌控。'
+  },
+  {
+    pattern: { D1:'lieshou', D2:'juji',    D3:'shouyi',  D4:'jilei',   D5:'guihua' },
+    title: '精密匠人',
+    desc: '你是搞钱界的瑞士钟表匠——每一件事都做到极致。研究到位、时机精准、手艺过硬、积累稳健、规划清晰。你不追求数量，但经手的每一件事都是精品。你的财富来自于"做到最好"的习惯。'
   }
 ];
 
@@ -622,11 +658,7 @@ function renderQuestion() {
   }
 
   const q = QUESTIONS[currentQ];
-  const dim = DIMENSIONS.find(d => d.id === q.dim);
-
   document.getElementById('q-counter').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
-  document.getElementById('dim-tag').textContent = dim.name;
-  document.getElementById('dim-label').textContent = dim.name;
   document.getElementById('q-text').textContent = q.text;
   document.getElementById('progress-fill').style.width = `${(currentQ / QUESTIONS.length) * 100}%`;
 
@@ -691,21 +723,6 @@ function renderResult() {
   const archetype = findClosestArchetype();
   const resultEl = document.getElementById('result');
 
-  const typeCode = DIMENSIONS.map(dim => {
-    const t = dim.types.find(t => t.id === typeResult[dim.id].typeId);
-    return t.name;
-  }).join('  ·  ');
-
-  const fortuneDots = Math.floor(Math.random() * 3) + 2;
-  const dotsStr = '●'.repeat(fortuneDots) + '○'.repeat(5 - fortuneDots);
-
-  const luckyColors = ['琥珀', '墨绿', '靛蓝', '朱红', '月白', '赤金', '青灰', '藕粉', '玄黑', '黛紫'];
-  const luckyNums = ['8', '6', '3', '9', '2', '7', '13', '24', '42', '88'];
-  const luckyDirs = ['东南', '正北', '西南', '正东', '西北', '东北', '正南', '正西'];
-
-  const luckyColor = luckyColors[Math.floor(Math.random() * luckyColors.length)];
-  const luckyNum = luckyNums[Math.floor(Math.random() * luckyNums.length)];
-  const luckyDir = luckyDirs[Math.floor(Math.random() * luckyDirs.length)];
   const compatible = ARCHETYPES[Math.floor(Math.random() * ARCHETYPES.length)];
 
   let html = '';
@@ -713,7 +730,6 @@ function renderResult() {
   html += `
     <div class="result-header">
       <span class="result-badge">你的发财体质</span>
-      <div class="result-type-code">${typeCode}</div>
       <div class="result-title">${archetype.title}</div>
       <p class="result-desc">${archetype.desc}</p>
     </div>
@@ -751,13 +767,6 @@ function renderResult() {
       </div>
     `;
   });
-  html += '</div>';
-
-  html += '<div class="fun-extras">';
-  html += `<div class="fun-card"><div class="label">幸运色</div><div class="value">${luckyColor}</div></div>`;
-  html += `<div class="fun-card"><div class="label">幸运数字</div><div class="value">${luckyNum}</div></div>`;
-  html += `<div class="fun-card"><div class="label">搞钱方位</div><div class="value">${luckyDir}</div></div>`;
-  html += `<div class="fun-card"><div class="label">今日发财指数</div><div class="value fortune-dots">${dotsStr}</div></div>`;
   html += '</div>';
 
   html += `
