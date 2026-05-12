@@ -704,19 +704,22 @@ function calculateResult() {
   });
 }
 
-function findClosestArchetype(pattern) {
-  let bestMatch = null;
-  let bestCount = -1;
-
-  ARCHETYPES.forEach(arch => {
-    let matchCount = 0;
+function findClosestArchetype(pattern, scores) {
+  // 计算每个原型的匹配分：如果某维度命中，加上该维度该类型的实际分数作为权重
+  const scored = ARCHETYPES.map(arch => {
+    let total = 0;
     for (const [dim, type] of Object.entries(pattern)) {
-      if (arch.pattern[dim] === type) matchCount++;
+      if (arch.pattern[dim] === type) {
+        total += scores?.[dim]?.[type] ?? 1;
+      }
     }
-    if (matchCount > bestCount) { bestCount = matchCount; bestMatch = arch; }
+    return { arch, total };
   });
 
-  return bestMatch;
+  const maxScore = Math.max(...scored.map(s => s.total), 0);
+  const best = scored.filter(s => s.total === maxScore);
+  // 平分时随机选取，避免数组顺序偏见
+  return best[Math.floor(Math.random() * best.length)].arch;
 }
 
 const COMPLEMENTS = {
@@ -737,9 +740,9 @@ function findComplementPartner() {
 }
 
 function renderResult() {
-  const archetype = findClosestArchetype(
-    Object.fromEntries(Object.entries(typeResult).map(([k, v]) => [k, v.typeId]))
-  );
+  const userPattern = Object.fromEntries(Object.entries(typeResult).map(([k, v]) => [k, v.typeId]));
+  const userScores = Object.fromEntries(Object.entries(typeResult).map(([k, v]) => [k, v.scores]));
+  const archetype = findClosestArchetype(userPattern, userScores);
   const resultEl = document.getElementById('result');
 
   const compatible = findComplementPartner();
